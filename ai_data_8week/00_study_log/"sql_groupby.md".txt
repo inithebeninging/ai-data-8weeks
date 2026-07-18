@@ -1,0 +1,184 @@
+# SQL Group By Practice
+
+## 오늘 배운 것
+- COUNT
+- SUM
+- AVG
+- GROUP BY
+- HAVING
+
+## 사용한 테이블
+- sales
+
+## 목표
+지역별, 카테고리별, 판매원별로 판매 데이터를 집계한다.
+
+##note1
+WHERE = 그룹 만들기 전, 행을 필터링
+HAVING = GROUP BY로 집계한 후, 그룹 결과를 필터링
+
+##1
+SELECT COUNT(*) AS total_orders
+FROM sales;
+전체 주문수 확인 20
+
+##2
+SELECT SUM(quantity) AS total_quantity
+FROM sales;
+전체 판매 수량 95
+
+##3
+SELECT AVG(unit_price) AS average_unit_price
+FROM sales;
+평균 단가 951,000
+
+##4
+SELECT SUM(quantity * unit_price) AS total_revenue
+FROM sales;
+총 매출 41,640,000
+
+##5
+SELECT 
+    region,
+    COUNT(*) AS order_count
+FROM sales
+GROUP BY region;
+지역별 주문수
+
+##6
+SELECT 
+    region,
+    SUM(quantity) AS total_quantity
+FROM sales
+GROUP BY region;
+지역별 총 매출
+
+##7
+SELECT 
+    region,
+    SUM(quantity * unit_price) AS total_revenue
+FROM sales
+GROUP BY region
+ORDER BY total_revenue DESC;
+지역별 총 매출을 높은 순으로 정렬
+
+##8
+SELECT 
+    region,
+    category,
+    SUM(quantity * unit_price) AS total_revenue
+FROM sales
+GROUP BY region, category
+ORDER BY region, total_revenue DESC;
+이중 그룹화, 지역별 각 항목 매출 확인
+
+##note2
+HAVING은 집계 결과에 조건을 거는 것.
+
+##9
+SELECT 
+    region,
+    COUNT(*) AS order_count
+FROM sales
+GROUP BY region
+HAVING COUNT(*) >= 5;
+주문 수가 5건 이상인 지역, 서울, 부산
+
+##10
+SELECT 
+    region,
+    SUM(quantity * unit_price) AS total_revenue
+FROM sales
+GROUP BY region
+HAVING SUM(quantity * unit_price) >= 5000000
+ORDER BY total_revenue DESC;
+총매출이 5백만원 이상인 지역
+
+##q1
+-지역별 평균 단가를 구해라.
+select 
+region,
+AVG(unit_price) as average_unit_price
+from sales
+GROUP BY region
+
+##q2
+-지역별 평균 판매 수량을 구해라.
+SELECT
+region,
+avg(quantity) as average_quantity
+from sales
+group by region
+
+##q3
+-카테고리별 총 판매 수량을 구해라.
+SELECT
+category,
+sum(quantity) as total_quantity
+from sales
+group by category
+
+##q4
+-고객 유형별 주문 수를 구해라.
+SELECT
+customer_type,
+quantity 
+from sales
+GROUP By customer_type
+
+##q5
+-상품별 총 매출을 구하고, 매출 높은 순서로 정렬해라.
+select 
+product,
+sum(unit_price) as total
+from sales
+group by product
+order by total desc
+
+##q6
+-상품별 총 판매 수량을 구하고, 수량 높은 순서로 정렬해라.
+SELECT 
+product,
+sum(quantity) as total_quantity
+from sales
+GROUP by product
+order by quantity desc
+
+##q7
+-판매원별 평균 주문 매출을 구해라.
+SELECT
+salesperson,
+avg(quantity * unit_price) as average_income
+from sales
+GROUP by salesperson
+order by average_income DESC
+1등 David
+
+##q8
+-지역별 총 매출을 구하되, 총 매출이 3,000,000원 이상인 지역만 조회해라.
+SELECT
+region,
+sum(quantity*unit_price) as total
+from sales
+group by region
+having total >= 3000000
+order by total desc
+총 4개의 지역이 달성, 그중 서울이 최고 매출
+
+##q9
+-카테고리별 주문 수를 구하되, 주문 수가 4건 이상인 카테고리만 조회해라.
+SELECT 
+    category,
+    COUNT(*) AS order_count
+FROM sales
+GROUP BY category
+HAVING COUNT(*) >= 4
+ORDER BY order_count DESC;
+
+##note3
+Count : 개수 세기.
+
+# 오늘 정리
+
+오늘은 COUNT, SUM, AVG와 GROUP BY를 사용해 지역별, 카테고리별, 판매원별 데이터를 집계했다.  
+WHERE는 그룹화 전에 행을 필터링하고, HAVING은 GROUP BY 이후의 집계 결과를 필터링할 때 사용한다.
