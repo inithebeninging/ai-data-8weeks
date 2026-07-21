@@ -1,0 +1,101 @@
+# SQL JOIN Practice
+
+## 오늘 배운 것
+- INNER JOIN / 양쪽 테이블에 둘 다 존재하는 데이터만 가져옴.
+- LEFT JOIN / 왼쪽 테이블은 전부 유지하고, 오른쪽 테이블에 맞는 값이 있으면 붙임. 없으면 NULL로 나옴.
+- key 개념
+
+## 사용한 테이블
+- customers
+- orders
+
+## 핵심 key
+- customers.customer_id
+- orders.customer_id
+
+## 목표
+고객 테이블과 주문 테이블을 customer_id를 기준으로 연결해본다.
+
+##1
+SELECT *
+FROM customers
+INNER JOIN orders
+ON customers.customer_id = orders.customer_id;
+customers와 orders에 모두 존재하는 customer_id만 연결했다.
+주문이 없는 고객은 나오지 않고, 고객 정보가 없는 주문도 나오지 않는다.
+
+##2
+SELECT 
+    customers.customer_name,
+    customers.region,
+    orders.product,
+    orders.quantity,
+    orders.unit_price
+FROM customers
+INNER JOIN orders
+ON customers.customer_id = orders.customer_id;
+고객 이름, 지역, 주문 상품, 수량, 단가만 선택해서 조회했다.
+
+##3
+SELECT 
+    customers.customer_name,
+    orders.product,
+    orders.quantity,
+    orders.unit_price,
+    orders.quantity * orders.unit_price AS revenue
+FROM customers
+INNER JOIN orders
+ON customers.customer_id = orders.customer_id;
+JOIN 후 주문별 매출을 계산했다.
+
+##4
+SELECT 
+    customers.customer_name,
+    customers.region,
+    orders.product,
+    orders.quantity,
+    orders.unit_price
+FROM customers
+INNER JOIN orders
+ON customers.customer_id = orders.customer_id
+WHERE customers.region = 'Seoul';
+고객 정보와 주문 정보를 합친 뒤, 지역이 Seoul인 고객의 주문만 조회했다.
+
+##5
+SELECT 
+    customers.customer_name,
+    SUM(orders.quantity * orders.unit_price) AS total_revenue
+FROM customers
+INNER JOIN orders
+ON customers.customer_id = orders.customer_id
+GROUP BY customers.customer_name
+ORDER BY total_revenue DESC;
+고객별로 주문 매출을 합산하고, 총 매출이 높은 순서로 정렬했다.
+
+##6
+SELECT 
+    customers.customer_id,
+    customers.customer_name,
+    orders.order_id,
+    orders.product
+FROM customers
+LEFT JOIN orders
+ON customers.customer_id = orders.customer_id;
+customers 테이블을 기준으로 모든 고객을 조회했다.
+주문이 없는 고객은 order_id와 product가 NULL로 표시된다.
+
+##7
+SELECT 
+    customers.customer_id,
+    customers.customer_name,
+    customers.region
+FROM customers
+LEFT JOIN orders
+ON customers.customer_id = orders.customer_id
+WHERE orders.order_id IS NULL;
+LEFT JOIN 후 orders.order_id가 NULL인 행만 골라서 주문이 없는 고객을 찾았다.
+
+##note
+INNER JOIN은 양쪽에 모두 있는 것만 남긴다.
+LEFT JOIN은 왼쪽 테이블을 기준으로 전부 남긴다.
+key는 두 테이블을 연결하는 기준 컬럼이다.
